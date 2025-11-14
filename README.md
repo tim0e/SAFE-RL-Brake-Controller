@@ -3,13 +3,14 @@ A RL braking controller that must stop a vehicle safely under varying road condi
 
 # Theory
 1. What system are we controlling?
-
+<br>
 A 1-D vehicle that moves in a straight line toward an obstacle and is able to apply braking force.
+<br>
 The goal is to model the longitudal motion (speed + distance).
 
 In extend this means
 - State variables:
-    - v: vehicle speed (m/s)
+    - $$v$$: vehicle speed (m/s)
     - d: distance to the obstacle (m)
     - mu: road friction coefficent
 - Control input:
