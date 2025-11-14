@@ -41,8 +41,8 @@ Assuming the car is a simple point-mass model, we use discrete-time updates:
 
 $$
 \begin{aligned}
-v_{t+1} &= v_t - a_t\dot\Delta t \\
-d_{t+1} &= d_t - v_t\dot\Delta t
+v_{t+1} &= v_t - a_t\Delta t \\
+d_{t+1} &= d_t - v_t\Delta t
 \end{aligned}
 $$
 
