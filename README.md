@@ -1,5 +1,5 @@
 # SAFE-RL-Brake-Controller
-A reinforcement learning braking controller that must stop a vehicle safely under varying road conditions (friction, slope, noise) without ever crashing, using a safety layer that overrides dangerous actions.
+A RL braking controller that must stop a vehicle safely under varying road conditions (friction, slope, noise) without ever crashing, using a safety layer that overrides dangerous actions.
 
 ---
 
@@ -25,7 +25,7 @@ The control problem can be defined as:
 
 ## 2. Friction
 
-Friction determines the maximum braking deceleration:
+Friction determines the maximum braking acceleration:
 
 $$
 a_{\max,\text{friction}} = \mu g
