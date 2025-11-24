@@ -63,3 +63,25 @@ If friction limits the deceleration to $a = \mu g$, then:
 $$
 d_{\text{stop}} = \frac{v^2}{2 \mu g}
 $$
+
+### 4.1. Mathematic Background 
+
+Position: $$x(t)$$ 
+Velocity: $$v(t) = \frac{dx}{dt}$$ 
+Acceleration: $$a(t) = \frac{dv}{dt}$$
+
+
+For constant acceleration:
+$$ a(t) = a = const $$
+
+So we have the differntial equation:
+$$ \frac{dv}{dt} = a $$
+
+or rearranged
+$$ dv = a dt $$
+
+We need to integrate both sides from initial time $t0$ within initial velocity $v0$, to time $t$ with velocity $v$:
+
+
+So we have the differntial equation:
+$$ = a $$
