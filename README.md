@@ -64,57 +64,112 @@ $$
 d_{\text{stop}} = \frac{v^2}{2 \mu g}
 $$
 
-### 4.1. Mathematic Background 
+### 4.1. Mathematical Background
 
-Position: $$x(t)$$ 
-Velocity: $$v(t) = \frac{dx}{dt}$$ 
-Acceleration: $$a(t) = \frac{dv}{dt}$$
+Fundamental quantities of motion:
 
+- **Position:**  
+  $x(t)$
 
-For constant acceleration:
-$$ a(t) = a = const $$
+- **Velocity:**  
+  $v(t) = \frac{dx}{dt}$
 
-So we have the definition for acceleration:
-$$ \frac{dv}{dt} = a $$
+- **Acceleration:**  
+  $a(t) = \frac{dv}{dt}$
 
-or rearranged
-$$ dv = a dt $$
+For braking, we assume that acceleration is constant:
 
-To get velocity as a function of time we need to integrate both sides from initial time $t_0$ within initial velocity $v_0$, to time $t$ with velocity $v$:
+$$ a(t) = a = \text{const}. $$
 
+To understand how velocity changes over time, we start from the differential equation of acceleration:
 
-So we have the differential equation:
-$$ \int_{v_0}^{v} dv= \int_{t_0}^{t} a dt $$
+$$ \frac{dv}{dt} = a, $$
 
-So (with a constant):
-$$ v - v_0 = a(t - t_0) $$
+or rearranged:
 
-Choosing $t_0 = 0$, the first standard kinematic equation is derived.
-$$ \boxed{ v(t) = v_0 + at } $$
+$$ dv = a\, dt. $$
 
-The next step is to relate velocity and position. We already know the definition of velocity:
-$$ v = \frac{dx}{dt} $$
+To obtain velocity as a function of time, we integrate both sides—from initial time $t_0$ and initial velocity $v_0$, to time $t$ and velocity $v$:
 
-Input of the derived equation from earlier and we obtain:
-$$ \frac{dx}{dt} = v_0 + at $$
-$$ dx = (v_0 + at)dt $$
+$$ \int_{v_0}^{v} dv = \int_{t_0}^{t} a\, dt. $$
 
-Integrate both sides again:
-$$ \int_{x_0}^{x} dx= \int_{0}^{t} (v_0 + a\tau)d\tau $$
-$$ x - x_0 = v_0t + \frac{1}{2}at^2 $$
+Since $a$ is constant, this gives:
 
-And lets define displacement $ s = x - x_0 $:
+$$ v - v_0 = a (t - t_0). $$
 
-$$ \boxed{ s = v_0t + \frac{1}{2}at^2 } $$
+Choosing $t_0 = 0$:
 
-We have now the two equations we need to understand the braking distance. We want these to relate to each other - not depending on time anymore.
+$$ \boxed{v(t) = v_0 + a t} $$
 
-$$ v = v_0 + at \rightarrow t = \frac{v - v_0}{a} $$
-$$ s = v_0\left(\frac{v - v_0}{a}\right) + \frac{1}{2}a\left(\frac{v - v_0}{a}\right)^2 $$
-$$ s = \frac{1}{a} \left[ v_0(v - v_0) + \frac{1}{2}(v - v_0)^2 \right] $$
-$$ s = \frac{1}{a} \left[ v_0v - v_0^2 + \left( \frac{1}{2}v^2 - v v_0 + \frac{1}{2}v_0^2 \right) \right] $$
-$$ s = \frac{v^2 - v_0^2}{2a} $$
+To compute the braking distance, we need to relate **velocity** and **position**:
 
-After rearranging we finally yield:
-$$ \boxed{ v^2 = v_0^2 + 2as } $$
+$$ v = \frac{dx}{dt}. $$
 
+Substituting the expression for $v(t)$:
+
+$$ \frac{dx}{dt} = v_0 + a t, $$
+
+which gives:
+
+$$ dx = (v_0 + a t)\, dt. $$
+
+Integrating both sides—from initial position $x_0$ to $x$, and from time $0$ to $t$:
+
+$$ \int_{x_0}^{x} dx = \int_{0}^{t} (v_0 + a\tau)\, d\tau, $$
+
+we obtain:
+
+$$ x - x_0 = v_0 t + \frac{1}{2} a t^2. $$
+
+Defining displacement $s = x - x_0$:
+
+$$ \boxed{s = v_0 t + \frac{1}{2} a t^2} $$
+
+We now have the two equations needed to understand the braking distance.  
+To eliminate time $t$, solve the first equation for $t$:
+
+$$ t = \frac{v - v_0}{a}. $$
+
+Insert this into the expression for $s$:
+
+$$ s = v_0 \left( \frac{v - v_0}{a} \right)
+  + \frac{1}{2} a \left( \frac{v - v_0}{a} \right)^2, $$
+
+$$ s = \frac{1}{a} \left[ v_0 (v - v_0)
+  + \frac{1}{2} (v - v_0)^2 \right], $$
+
+$$ s = \frac{1}{a} \left[ v_0 v - v_0^2
+  + \left( \frac{1}{2} v^2 - v v_0 + \frac{1}{2} v_0^2 \right) \right], $$
+
+$$ s = \frac{v^2 - v_0^2}{2a}. $$
+
+Rearranging gives:
+
+$$ \boxed{v^2 = v_0^2 + 2 a s} $$
+
+To specialize it for braking, we assume:
+
+- initial speed: $v_0 = v$ (current speed)
+- final speed: $v = 0$ (fully stopped)
+- stopping distance: $s = d_{\text{stop}}$
+- acceleration: $a < 0$
+
+Insert these into the equation:
+
+$$ 0^2 = v^2 + 2 a\, d_{\text{stop}} $$
+
+$$ - v^2 = 2 a\, d_{\text{stop}} $$
+
+Since $a$ is negative during braking, write $a = -|a|$:
+
+$$ - v^2 = 2 (-|a|)\, d_{\text{stop}}, $$
+
+$$ v^2 = 2 |a|\, d_{\text{stop}}. $$
+
+Thus the stopping distance is:
+
+$$ \boxed{d_{\text{stop}} = \frac{v^2}{2|a|}}. $$
+
+If we denote the (positive) deceleration magnitude simply as $a$, we obtain the familiar form:
+
+$$ \boxed{d_{\text{stop}} = \frac{v^2}{2a}}. $$
