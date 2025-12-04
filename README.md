@@ -64,6 +64,8 @@ $$
 d_{\text{stop}} = \frac{v^2}{2 \mu g}
 $$
 
+---
+
 ### 4.1. Mathematical Background
 
 Fundamental quantities of motion:
