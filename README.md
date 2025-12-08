@@ -132,18 +132,15 @@ To eliminate time $t$, solve the first equation for $t$:
 
 $$ t = \frac{v - v_0}{a}. $$
 
-Insert this into the expression for $s$:
+Insert into the expression for $s$:
 
-$$ s = v_0 \left( \frac{v - v_0}{a} \right)
-  + \frac{1}{2} a \left( \frac{v - v_0}{a} \right)^2, $$
+$$ s = v_0 \left( \frac{v - v_0}{a} \right)  + \frac{1}{2} a \left( \frac{v - v_0}{a} \right)^2, $$
 
-$$ s = \frac{1}{a} \left[ v_0 (v - v_0)
-  + \frac{1}{2} (v - v_0)^2 \right], $$
+$$ s = \frac{1}{a} \left[ v_0 (v - v_0)  + \frac{1}{2} (v - v_0)^2 \right], $$
 
-$$ s = \frac{1}{a} \left[ v_0 v - v_0^2
-  + \left( \frac{1}{2} v^2 - v v_0 + \frac{1}{2} v_0^2 \right) \right], $$
+$$ s = \frac{1}{a} \left[ v_0 v - v_0^2  + \left( \frac{1}{2} v^2 - v v_0 + \frac{1}{2} v_0^2 \right) \right], $$
 
-$$ s = \frac{v^2 - v_0^2}{2a}. $$
+$$ s = \frac{v^2 - v_0^2}{2a} $$
 
 Rearranging gives:
 
@@ -174,4 +171,14 @@ $$ \boxed{d_{\text{stop}} = \frac{v^2}{2|a|}}. $$
 
 If we denote the (positive) deceleration magnitude simply as $a$, we obtain the familiar form:
 
-$$ \boxed{d_{\text{stop}} = \frac{v^2}{2a}}. $$
+$$ \boxed{d_{\text{stop}} = \frac{v^2}{2a}} $$
+
+
+---
+
+## 5. Control 
+The diagram illustrates the closed-loop braking controller.
+
+![Control Loop](images/RL-brake_controller_control_loop.jpg)
+
+At each timestep, the controller (policy) receives the current state $x_t$ of the vehicle - including its velocity $v$, remaining distance $d$ to the obstacle, and friction $\mu$ — and computes a raw braking command. This command then passes through a safety layer, which ensures that the requested braking does not exceed physical limits. The resulting safe acceleration is applied to the vehicle dynamics, updating the speed and distance based on the motion equations. The updated state $x_{t+1}$ is fed back into the controller, forming the closed feedback loop.

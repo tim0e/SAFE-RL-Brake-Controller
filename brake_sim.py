@@ -45,7 +45,13 @@ def step_function(state, params, a_safe):
     return next_state
 
 # 3. Policy
-def policy():
+def policy(state, params):
+    v = state["v"]
+    d = state["d"]
+    a_max = params["a_max"]
+
+    if d <= 0:
+        return 1.0
     u_raw = 0.5
     return u_raw
 
