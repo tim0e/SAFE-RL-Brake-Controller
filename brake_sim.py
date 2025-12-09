@@ -42,7 +42,7 @@ def step_function(state, params, a_safe):
 
     # update velocity and distance
     v_next = max(0, v - a_safe * dt)    # - due to deceleration
-    d_next = d - v * dt                 # - due to deceleration
+    d_next = d - v * dt                 # distance to wall gets smaller
 
     # store velocity and distance in a dictionary
     next_state = {
@@ -114,7 +114,6 @@ def closed_loop_sim(initial_state, params, road_condition, max_steps = 1000):
         v = state["v"]
         d = state["d"]
         mu = state["mu"]
-        print("Step No:", step, "Velocity:", v, "Distance:", d, "Road Condition:", condition)
 
         # crash check
         if v <= 0.001:
@@ -123,6 +122,8 @@ def closed_loop_sim(initial_state, params, road_condition, max_steps = 1000):
         if d <= 0:
             print("CRASH!")
             break
+        print("Step No:", step, "Velocity:", v, "Distance:", d, "Road Condition:", condition)
+
         # policy and safety update
         u_raw = policy(state, params)
         a_safe = safety_layer(state, params, u_raw)
