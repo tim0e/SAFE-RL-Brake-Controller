@@ -182,3 +182,7 @@ The diagram illustrates the closed-loop braking controller.
 ![Control Loop](images/RL-brake_controller_control_loop.jpg)
 
 At each timestep, the controller (policy) receives the current state $x_t$ of the vehicle - including its velocity $v$, remaining distance $d$ to the obstacle, and friction $\mu$ — and computes a raw braking command. This command then passes through a safety layer, which ensures that the requested braking does not exceed physical limits. The resulting safe acceleration is applied to the vehicle dynamics, updating the speed and distance based on the motion equations. The updated state $x_{t+1}$ is fed back into the controller, forming the closed feedback loop.
+
+---
+
+# Baseline Performance
