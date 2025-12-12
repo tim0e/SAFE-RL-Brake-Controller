@@ -4,57 +4,26 @@
 import random
 
 
-random.seed(1)
+#random.seed(1)
 
 # ------------------------
 d_safe = 1                 # distance where the vehicle should stop [m]
 unit_convert = 3.6         # km/h to m/s
+road_segments = 5           # Amount of road segments n
 
 # Road conditions mu
 road_condition = {
-    "muddy": 1.5,
     "dry": 1.0,
-    "slimy":0.6,
+    "slimy": 0.8,
+    "muddy": 0.6,
     "wet": 0.3,  
     "ice": 0.1,
 }
 
-# segment bounds values
-s0 = 1000
-s1 = 800
-s2 = 600
-s3 = 400
-s4 = 200
-s5 = 0
-segment_bounds = [
-    # start, finish
-    (s0, s1),
-    (s1, s2),
-    (s2, s3),
-    (s3, s4),
-    (s4, s5),
-]
-
-# Road profile
-# road_profile = [
-    # d_start, , d_end, mu
-    #(500, 400, road_condition["dry"]),
-    #(400, 300, road_condition["wet"]),
-    #(300, 200, road_condition["ice"]),
-    #(200, 100, road_condition["muddy"]),
-    #(100, 0, road_condition["slimy"]),
-#]
-
-# Initial state paramters
-#initial_state = {
-    #"v": 80 / unit_convert, # velocity [km/h]
-    #"d": 300,               # distance [m]
-    #"mu": 1.0,              # coefficient for road conditions 
-#}
 # Global Parameters
 params = {
     "g": 9.81,          # gravity
-    "dt": 0.05,         # time step delta t [s]
+    "dt": 0.02,         # time step delta t [s]
     "a_max": 8,         # maximum acceleration [m/s^2]
 }
 # ----------------------
@@ -85,6 +54,19 @@ def sample_initial_state(v_range, d_range):
     }
     return state
 
+# ----------------------
+# Generation of segment bounds
+# ----------------------
+def make_segment_bounds(d0, n_segments):
+    seg_len = d0 / n_segments
+    bounds = []
+    for i in range(n_segments):
+        d_start = d0 - i * seg_len
+        d_end = d0 - (i + 1) * seg_len
+        bounds.append((d_start, d_end))
+    bounds[-1] = (bounds[-1][0], 0.0)
+    return bounds
+
 
 # 2. Dynamics x_{t+1} = f(x_t, a_t)
 def step_function(state, params, a_safe):
@@ -98,7 +80,7 @@ def step_function(state, params, a_safe):
 
     # update velocity and distance
     v_next = max(0, v - a_safe * dt)    # - due to deceleration
-    d_next = d - v * dt                 # distance to wall gets smaller
+    d_next = d - 0.5 * (v + v_next) * dt                 # distance to wall gets smaller
 
     # store velocity and distance in a dictionary
     next_state = {
@@ -146,9 +128,11 @@ def update_road_profile(d, road_profile):
         if d_end <= d <= d_start:
             return mu
     return road_condition["dry"]
+
 def closed_loop_sim(params, max_steps = 10000):
 
-    state = sample_initial_state((80, 120), (800, 1000))
+    state = sample_initial_state((120, 140), (500, 800))
+    segment_bounds = make_segment_bounds(state["d"], road_segments)
     road_profile = sample_random_road_profile(road_condition, segment_bounds)
     
     for step in range(max_steps):
@@ -166,7 +150,8 @@ def closed_loop_sim(params, max_steps = 10000):
         if v <= 0.001:
             print("Stopped")
             break
-        print("Step No:", step, "Velocity:", v, "Distance:", d, "Road Condition:", mu)
+        if step % 50 == 0:
+            print("Step No:", step, "Velocity:", v, "Distance:", d, "Road Condition:", mu)
 
         # policy and safety update
         u_raw = policy(state, params)
