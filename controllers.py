@@ -1,4 +1,6 @@
-def policy(state, params):
+import random
+
+def baseline_controller(state, params, d_safe):
     v = max(0.0, state["v"] + random.gauss(0, 0.1)) # introduced sensor noise
     d = max(0.0, state["d"] + random.gauss(0, 0.5)) # introduced sensor noise
     a_max = params["a_max"]

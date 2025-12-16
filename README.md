@@ -186,3 +186,9 @@ At each timestep, the controller (policy) receives the current state $x_t$ of th
 ---
 
 # Baseline Performance
+
+As a reference, I implemented a deterministic, physics-based braking controller.
+The controller computes the required deceleration assuming constant braking to reach a predefined safe stopping distance.
+The controller is goal-aware but myopic: it reacts only to the current estimated distance and velocity and assumes that current road conditions remain unchanged.
+To reflect realistic sensing, the controller operates under noisy measurements of velocity and distance, while the road friction coefficient remains unobservable.
+A safety layer enforces physical feasibility by clipping the commanded deceleration according to the friction-limited braking force.

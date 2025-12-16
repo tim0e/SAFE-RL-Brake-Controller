@@ -1,11 +1,14 @@
 # ------------------------
-# SAFE BRAKE RL CONTROLLER
+# The environment in which the braking will happen
 # ------------------------
 import random
+#from controllers import baseline_controller
 
 
 #random.seed(1)
 
+#-------------------------
+# CONSTANTS
 # ------------------------
 d_safe = 1                 # distance where the vehicle should stop [m]
 unit_convert = 3.6         # km/h to m/s
@@ -20,13 +23,6 @@ road_condition = {
     "ice": 0.1,
 }
 
-# Global Parameters
-params = {
-    "g": 9.81,          # gravity
-    "dt": 0.02,         # time step delta t [s]
-    "a_max": 8,         # maximum acceleration [m/s^2]
-}
-# ----------------------
 
 # ----------------------
 # Generation of the Road
@@ -38,6 +34,16 @@ def sample_random_road_profile(road_condition, segment_bounds):
         mu = road_condition[road_state]
         road_profile.append((start, finish, mu))
     return road_profile
+
+
+# ----------------------
+# Updating the road profile according to segment bounds
+# ----------------------
+def update_road_profile(d, road_profile):
+    for (d_start, d_end, mu) in road_profile:
+        if d_end <= d <= d_start:
+            return mu
+    return road_condition["dry"]
 
 # ----------------------
 # Generation of the initial state
@@ -68,7 +74,9 @@ def make_segment_bounds(d0, n_segments):
     return bounds
 
 
-# 2. Dynamics x_{t+1} = f(x_t, a_t)
+# ----------------------
+# Dynamics
+# ----------------------
 def step_function(state, params, a_safe):
     """ One Step Simulation of the vehicle dynamics."""
     # unpack variables
@@ -79,7 +87,7 @@ def step_function(state, params, a_safe):
     dt = params["dt"]
 
     # update velocity and distance
-    v_next = max(0, v - a_safe * dt)    # - due to deceleration
+    v_next = max(0, v - a_safe * dt)                     # - due to deceleration
     d_next = d - 0.5 * (v + v_next) * dt                 # distance to wall gets smaller
 
     # store velocity and distance in a dictionary
@@ -92,25 +100,10 @@ def step_function(state, params, a_safe):
     # return updated state values
     return next_state
 
-# 3. Policy
-def policy(state, params):
-    v = max(0.0, state["v"] + random.gauss(0, 0.1)) # introduced sensor noise
-    d = max(0.0, state["d"] + random.gauss(0, 0.5)) # introduced sensor noise
-    a_max = params["a_max"]
-    d_eff = d - d_safe
-    
-    if d_eff <= 0:
-        return 1.0
 
-    a_required = v**2 / (2 * d_eff)
-
-    u_raw = a_required / a_max
-
-    u_raw = max(0.0, min(1.0, u_raw))
-
-    return u_raw
-
-# 4. Safety Layer
+# ----------------------
+# Safety Layer
+# ----------------------
 def safety_layer(state, params, u_raw):
     a_max = params["a_max"]
     g = params["g"]
@@ -123,17 +116,28 @@ def safety_layer(state, params, u_raw):
     
     return a_safe
 
-def update_road_profile(d, road_profile):
-    for (d_start, d_end, mu) in road_profile:
-        if d_end <= d <= d_start:
-            return mu
-    return road_condition["dry"]
 
-def closed_loop_sim(params, max_steps = 10000):
+# ----------------------
+# SIMULATION
+# ----------------------
+def sim(controller, params, seed, max_steps = 10000):
+    if seed is not None:
+        random.seed(seed)
 
     state = sample_initial_state((120, 140), (500, 800))
     segment_bounds = make_segment_bounds(state["d"], road_segments)
     road_profile = sample_random_road_profile(road_condition, segment_bounds)
+    v0 = state["v"]
+    d0 = state["d"]
+
+    trajectory = {
+        "t": [],
+        "v": [],
+        "d": [],
+        "mu": [],
+        "u_raw": [],
+        "a_safe": [],
+    }
     
     for step in range(max_steps):
         
@@ -145,20 +149,42 @@ def closed_loop_sim(params, max_steps = 10000):
 
         # crash check
         if d <= 0:
-            print("CRASH!")
-            break
+            return {
+                "outcome": "crash",
+                "trajectory": trajectory,
+                "t_final": step * params["dt"],
+                "d_final": d,
+                "v_final": v,
+                "dist_error": abs(d_safe - d),
+                "v0": v0,
+                "d0": d0,
+            }
         if v <= 0.001:
-            print("Stopped")
-            break
-        if step % 50 == 0:
-            print("Step No:", step, "Velocity:", v, "Distance:", d, "Road Condition:", mu)
+            return {
+                "outcome": "stopped",
+                "trajectory": trajectory,
+                "t_final": step * params["dt"],
+                "d_final": d,
+                "v_final": v,
+                "dist_error": abs(d_safe - d),
+                "v0": v0,
+                "d0": d0,
+            }
 
         # policy and safety update
-        u_raw = policy(state, params)
+        observable_state = {
+            "v": state["v"],
+            "d": state["d"],
+        }
+        u_raw = controller(observable_state, params, d_safe)
         a_safe = safety_layer(state, params, u_raw)
         next_state = step_function(state, params, a_safe)
+
+        trajectory["t"].append(step * params["dt"])
+        trajectory["v"].append(v)
+        trajectory["d"].append(d)
+        trajectory["mu"].append(state["mu"])
+        trajectory["u_raw"].append(u_raw)
+        trajectory["a_safe"].append(a_safe)
         
         state = next_state
-
-if __name__ == "__main__":
-    closed_loop_sim(params)
